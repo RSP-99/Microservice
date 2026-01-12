@@ -1,20 +1,17 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.ver.outputs.version }}
     steps:
-      - id: ver
-        run: echo "version=1.0.${{ github.run_number }}" >> $GITHUB_OUTPUT
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-  test:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "Testing version ${{ needs.build.outputs.version }}"
-
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "Deploying version ${{ needs.build.outputs.version }}"
+      - name: Build Docker image
+        run: docker build -t test-image .
